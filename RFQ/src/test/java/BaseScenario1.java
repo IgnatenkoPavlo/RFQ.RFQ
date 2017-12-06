@@ -1,3 +1,4 @@
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import org.assertj.core.api.SoftAssertions;
@@ -14,6 +15,7 @@ import java.util.Properties;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.WebDriverRunner.url;
 
 public class BaseScenario1 {
 
@@ -60,6 +62,28 @@ public class BaseScenario1 {
         //Ждём пока загрузится страница и проподёт "Loading..."
         commonCode.WaitForPageToLoad(driver);
         CommonCode.WaitForProgruzkaSilent();
+        System.out.println("[-] страница загружена - URL: " + url());
+
+        //Создаём новый Quotation
+        System.out.print("[-] Создаём новый Quotation, ID = ");
+        $(By.cssSelector(QuotationListPage.newQuotationButton)).click();
+        CommonCode.WaitForProgruzkaSilent();
+
+        //Получаем Id новой квотации
+        String newQuotationID = $(By.cssSelector(NewQuotationPage.quotationId)).getText();
+        System.out.println(CommonCode.ANSI_GREEN+newQuotationID.substring(1, newQuotationID.length())+CommonCode.ANSI_RESET);
+
+        //Выставляем имя клиента
+        System.out.print("[-] Выставляем имя клиента, как "+"Test Client: ");
+        $(By.cssSelector(NewQuotationPage.clientName)).click();
+        $(By.cssSelector(NewQuotationPage.chooseClientNamePopup)).shouldBe(Condition.visible);
+        //$(By.cssSelector(NewQuotationPage.ChooseClientNamePopup.searchField)).sendKeys("Test Client\n");
+        $(By.cssSelector(NewQuotationPage.chooseClientNamePopup
+                + " div[class=\"check-list scroll-pane\"] div[class=\"jspContainer\"] div[class=\"jspPane\"]"
+                + " div[group-value=\"T\"] div[class=\"check-wrap\"] span")).click();
+        CommonCode.WaitForProgruzkaSilent();
+
+
 
     }
 
