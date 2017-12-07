@@ -82,8 +82,64 @@ public class BaseScenario1 {
                 + " div[class=\"check-list scroll-pane\"] div[class=\"jspContainer\"] div[class=\"jspPane\"]"
                 + " div[group-value=\"T\"] div[class=\"check-wrap\"] span")).click();
         CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
 
+        //Выбираем Currency
+        System.out.print("[-] Выставляем валюту - RUB: ");
+        $(By.cssSelector(NewQuotationPage.Options.currencyButton)).click();
+        $(By.cssSelector(NewQuotationPage.Options.currencySelectors)).shouldBe(Condition.visible);
+        $(By.cssSelector(NewQuotationPage.Options.currencyRUB)).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
 
+        //Выставляем Nights
+        System.out.print("[-] Выставляем 3 ночи: ");
+        $(By.cssSelector(NewQuotationPage.Options.nightsButton)).click();
+        $(By.cssSelector(NewQuotationPage.Options.nightsInput)).shouldBe(Condition.visible);
+        $(By.cssSelector(NewQuotationPage.Options.nightsInput)).setValue("3");
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        //Выбираем Present Meal Service
+        System.out.print("[-] Выставляем Preset Meal Services - FB: ");
+        $(By.cssSelector(NewQuotationPage.Options.presentMealServicesButton)).click();
+        $(By.cssSelector(NewQuotationPage.Options.presentMealServicesButton)).click();
+        $(By.cssSelector(NewQuotationPage.Options.presentMealServicesSelectors)).shouldBe(Condition.visible);
+        $(By.cssSelector(NewQuotationPage.Options.presentMealServiceFullBoard)).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        //Выбираем Additional Service
+        /*System.out.print("[-] Выставляем Additional Service - Headphones: ");
+        $(By.cssSelector(NewQuotationPage.Options.additionalServicesButton)).click();
+        $(By.cssSelector(NewQuotationPage.Options.additionalServicesSelectors)).shouldBe(Condition.visible);
+        $(By.cssSelector(NewQuotationPage.Options.additionalServicesHeadphones)).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);*/
+
+        //Выбираем Guides language
+        System.out.print("[-] Выставляем Guides language - English: ");
+        $(By.cssSelector(NewQuotationPage.Options.guidesLanguageButton)).click();
+        $(By.cssSelector(NewQuotationPage.Options.guidesLanguageArea)).shouldBe(Condition.visible);
+        $(By.cssSelector(NewQuotationPage.Options.guidesLanguageEnglish)).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        //Выставляем Free Tour Leaders
+        System.out.print("[-] Выставляем Free Tour Leaders - 2:");
+        $(By.cssSelector(NewQuotationPage.Options.freeTourLeadersButton)).click();
+        $(By.cssSelector(NewQuotationPage.Options.freeTourLeadersInput)).shouldBe(Condition.visible);
+        $(By.cssSelector(NewQuotationPage.Options.freeTourLeadersInput)).setValue("5");
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        /*
+        Войти в систему (залогиниться)
+        Создать новую квотацию
+        Заполнить все данные для расчета (опции, даты, группы, размещения, маршрут с программой тура)
+        Расчитать стоимость тура
+        Сгенерировать программу (web-версия + doc-версия)
+        */
 
     }
 
