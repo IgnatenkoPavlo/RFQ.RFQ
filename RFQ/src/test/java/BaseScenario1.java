@@ -11,6 +11,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -71,7 +73,8 @@ public class BaseScenario1 {
 
         //Получаем Id новой квотации
         String newQuotationID = $(By.cssSelector(NewQuotationPage.quotationId)).getText();
-        System.out.println(CommonCode.ANSI_GREEN+newQuotationID.substring(1, newQuotationID.length())+CommonCode.ANSI_RESET);
+        newQuotationID = newQuotationID.substring(1, newQuotationID.length());
+        System.out.println(CommonCode.ANSI_GREEN+newQuotationID+CommonCode.ANSI_RESET);
 
         //Выставляем имя клиента
         System.out.print("[-] Выставляем имя клиента, как "+"Test Client: ");
@@ -93,10 +96,10 @@ public class BaseScenario1 {
         System.out.println(CommonCode.OK);
 
         //Выставляем Nights
-        System.out.print("[-] Выставляем 3 ночи: ");
+        System.out.print("[-] Выставляем 2 ночи: ");
         $(By.cssSelector(NewQuotationPage.Options.nightsButton)).click();
         $(By.cssSelector(NewQuotationPage.Options.nightsInput)).shouldBe(Condition.visible);
-        $(By.cssSelector(NewQuotationPage.Options.nightsInput)).setValue("3");
+        $(By.cssSelector(NewQuotationPage.Options.nightsInput)).setValue("2");
         CommonCode.WaitForProgruzkaSilent();
         System.out.println(CommonCode.OK);
 
@@ -126,17 +129,93 @@ public class BaseScenario1 {
         System.out.println(CommonCode.OK);
 
         //Выставляем Free Tour Leaders
-        System.out.print("[-] Выставляем Free Tour Leaders - 2:");
+        System.out.print("[-] Выставляем Free Tour Leaders - 1:");
         $(By.cssSelector(NewQuotationPage.Options.freeTourLeadersButton)).click();
         $(By.cssSelector(NewQuotationPage.Options.freeTourLeadersInput)).shouldBe(Condition.visible);
-        $(By.cssSelector(NewQuotationPage.Options.freeTourLeadersInput)).setValue("5");
+        $(By.cssSelector(NewQuotationPage.Options.freeTourLeadersInput)).setValue("1");
         CommonCode.WaitForProgruzkaSilent();
         System.out.println(CommonCode.OK);
 
+        //Заполняем даты
+        Date nowDate = new Date();
+        SimpleDateFormat formatForDateNow = new SimpleDateFormat("dd-MM-yyyy");
+        System.out.print("[-] Заполняем " +formatForDateNow.format(nowDate)+ " и плюс 4 дня: ");
+        //Кликаем на поле для ввода даты
+        $(By.cssSelector(NewQuotationPage.Dates.firstIntervalFromInput)).click();
+
+        //System.out.println("Текущая дата: " + formatForDateNow.format(nowDate));
+        //Вводим дату в поле
+        $(By.cssSelector(NewQuotationPage.Dates.firstIntervalFromInput)).setValue(formatForDateNow.format(nowDate)).pressEnter();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        //Выбираем Москву
+        System.out.print("[-] Добавляем размещение - Москва: ");
+        $(By.cssSelector(NewQuotationPage.Accommodations.cityAddButton)).click();
+        $(By.cssSelector(NewQuotationPage.Accommodations.cityList)).shouldBe(Condition.visible);
+        $(By.cssSelector(NewQuotationPage.Accommodations.moscowButton)).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        //В первый день добавить экскурсию Бункер-42
+        System.out.print("[-] В первый день добавляем экскурсию - Бункер-42: ");
+        $(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(1,1)
+                + NewQuotationPage.Itinerary.ServiceAddButton)).scrollTo().click();
+        $(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(1,1)
+                + NewQuotationPage.Itinerary.ServiceAddButton
+                + "/div/div[@class=\"icons-block\"]")).shouldBe(Condition.visible);
+        $(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(1,1)
+                + NewQuotationPage.Itinerary.ServiceAddButton
+                + "/div/div[@class=\"icons-block\"]//div[@data-service-type-id=\"3\"]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+        $(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(1,1)
+                + NewQuotationPage.Itinerary.serviceByNumberXP(4)
+                + "//div[@class=\"click-service-area\"]")).scrollTo().click();
+        $(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(1,1)
+                + NewQuotationPage.Itinerary.serviceByNumberXP(4)
+                + "//div[@class=\"service-names-list check-wrapper\"]")).shouldBe(Condition.visible);
+        $(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(1,1)
+                + NewQuotationPage.Itinerary.serviceByNumberXP(4)
+                + "//div[@class=\"service-names-list check-wrapper\"]"
+                + "//div[@class=\"check-list scroll-pane jspScrollable\"]/div[@class=\"jspContainer\"]"
+                + "//div[@group-value=\"B\"]//div[@data-value=\"Bunker-42\"]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        //В второй день добавить экскурсию Большой театр
+        System.out.print("[-] Во второй день добавляем экскурсию - Большой Театр: ");
+        $(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(2,1)
+                + NewQuotationPage.Itinerary.ServiceAddButton)).scrollTo().click();
+        $(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(2,1)
+                + NewQuotationPage.Itinerary.ServiceAddButton
+                + "/div/div[@class=\"icons-block\"]")).shouldBe(Condition.visible);
+        $(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(2,1)
+                + NewQuotationPage.Itinerary.ServiceAddButton
+                + "/div/div[@class=\"icons-block\"]//div[@data-service-type-id=\"7\"]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+        $(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(2,1)
+                + NewQuotationPage.Itinerary.serviceByNumberXP(4)
+                + "//div[@class=\"click-service-area\"]")).scrollTo().click();
+        $(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(2,1)
+                + NewQuotationPage.Itinerary.serviceByNumberXP(4)
+                + "//div[@class=\"check-wrapper service-names-list\"]")).shouldBe(Condition.visible);
+        $(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(2,1)
+                + NewQuotationPage.Itinerary.serviceByNumberXP(4)
+                + "//div[@class=\"check-wrapper service-names-list\"]"
+                + "//div[@class=\"check-list scroll-pane\"]/div[@class=\"jspContainer\"]/div[@class=\"jspPane\"]"
+                + "//div[@data-value=\"Bolshoi theatre\"]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+
+
+        //Запускаем расчёт
+        System.out.print("Запускаем расчёт: ");
+        $(By.xpath(NewQuotationPage.Results.calculateButton)).scrollTo().click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
         /*
-        Войти в систему (залогиниться)
-        Создать новую квотацию
-        Заполнить все данные для расчета (опции, даты, группы, размещения, маршрут с программой тура)
+        Заполнить все данные для расчета (маршрут с программой тура)
         Расчитать стоимость тура
         Сгенерировать программу (web-версия + doc-версия)
         */

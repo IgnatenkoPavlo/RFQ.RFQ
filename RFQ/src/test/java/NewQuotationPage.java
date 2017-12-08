@@ -1,3 +1,7 @@
+import org.openqa.selenium.By;
+
+import static com.codeborne.selenide.Selenide.$;
+
 public class NewQuotationPage extends QuotationListPage{
 
     public final static String quotationId = "#content span[class=\"grey-title\"] span";
@@ -37,8 +41,10 @@ public class NewQuotationPage extends QuotationListPage{
         public final static String freeTourLeadersInput = optionsArea+ ":nth-child(3) div:nth-child(2) input[data-optionkey=\"ftl_number\"]";
     }
 
+    public final static String datesArea = "#datesBlock";
     public static class Dates{
 
+        public final static String firstIntervalFromInput = datesArea+ " div[style=\"cursor: pointer;\"] div[class=\"info-col\"] input[type=\"text\"]";
 
     }
 
@@ -47,13 +53,54 @@ public class NewQuotationPage extends QuotationListPage{
 
     }
 
+    public final static String accommodationsArea = "#accommodationsBlock";
     public static class Accommodations{
 
+        public final static String cityAddButton = accommodationsArea+ " div[class=\"top-row\"] div[class=\"add-btn\"]";
+        public final static String cityList = cityAddButton + " div[class=\"check-wrapper city-selector\"]";
+        public final static String moscowButton = cityList + " div[class=\"check-list jspScrollable\"] div[class=\"jspContainer\"]" +
+                " div[class=\"jspPane\"] div[class=\"check-wrap\"] span";
 
     }
 
     public static class Itinerary{
 
+        public static String ProgramSectionXP(){
 
+            String result=$(By.cssSelector(NewQuotationPage.quotationId)).getText();
+            result = result.substring(1, result.length());
+            result = "//div[@id=\"quotationdays"+result+"\"]";
+
+            return result;
+        }
+
+        public static String DayByNumberXP(int dayCounter){
+
+            return ProgramSectionXP()+"//div[@class=\"day-info\"]["+String.valueOf(dayCounter)+"]";
+        }
+
+        public static String GetDataIdOfDayByNumber(int dayCounter){
+
+            return $(By.xpath(DayByNumberXP(dayCounter))).getAttribute("data-id");
+        }
+
+        public static String DayCityByNumberXP(int dayCounter, int cityCounter){
+
+            return "//div[@id=\"quotationdaycities"+GetDataIdOfDayByNumber(dayCounter)+"\"]//div["+String.valueOf(cityCounter)+"]";
+        }
+
+        public static final String ServiceAddButton = "//div[2]/div[@class=\"dayCityServices ui-sortable\"]"
+                +"//div[@class=\"hover-area\"]/div[@class=\"add-btn\"]";
+
+        public static String serviceByNumberXP(int serviceCounter){
+
+            return "//div[2]//div[@class=\"dayCityServices ui-sortable\"]//div["+String.valueOf(serviceCounter)+"]";
+        }
+    }
+
+    public final static String resultsAreaXP = "//div[@id=\"resultsBlock\"]";
+    public static class Results{
+
+        public static final String calculateButton = resultsAreaXP + "//button[@id=\"execute\"]";
     }
 }
