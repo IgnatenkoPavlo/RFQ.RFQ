@@ -11,10 +11,15 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.WebDriverRunner.url;
@@ -35,8 +40,35 @@ public class BaseScenario1 {
         softAssertions = new SoftAssertions();
     }
 
+
+
     @Test
     public void test1(){
+
+        class PeriodsCollection{
+            public LocalDate dateFrom;
+            public LocalDate dateTo;
+            public int priceSGL;
+            public int priceDBL;
+            public int priceSGLWE;
+            public int priceDBLWE;
+
+            PeriodsCollection(String ... data) {
+                if(data.length>=1)
+                    dateFrom = LocalDate.of(Integer.valueOf(data[0].substring(6,data[0].length())), Integer.valueOf(data[0].substring(3,5)), Integer.valueOf(data[0].substring(0,2)));
+                if(data.length>=2)
+                    dateTo = LocalDate.of(Integer.valueOf(data[1].substring(6,data[1].length())), Integer.valueOf(data[1].substring(3,5)), Integer.valueOf(data[1].substring(0,2)));
+                if(data.length>=3)
+                    priceSGL = Integer.valueOf(data[2]);
+                if(data.length>=4)
+                    priceDBL = Integer.valueOf(data[3]);
+                if(data.length>=5)
+                    priceSGLWE = Integer.valueOf(data[4]);
+                if(data.length>=6)
+                    priceDBLWE = Integer.valueOf(data[5]);
+            }
+        }
+
         WebDriverRunner.setWebDriver(driver);
         Configuration selenideConfig = new Configuration();
         selenideConfig.timeout = 30000;
@@ -47,10 +79,86 @@ public class BaseScenario1 {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         System.out.print("Получил проперти ");
         System.out.println(props.getProperty("baseURL"));
         System.out.print("[-] Открываем URL: "+props.getProperty("baseURL"));
         open(props.getProperty("baseURL"));
+        commonCode.WaitForPageToLoad(driver);
+        System.out.println(" - готово");
+
+
+        //Вводим логин с паролем и кликаем Логин
+        System.out.print("[-] Вводим логин с паролем и кликаем Логин");
+        $(By.id("username")).setValue("test");
+        $(By.id("password")).setValue("password");
+        $(By.cssSelector("button[type=\"submit\"]")).click();
+        System.out.println(" - готово");
+
+        //Ждём пока загрузится страница и проподёт "Loading..."
+        commonCode.WaitForPageToLoad(driver);
+        CommonCode.WaitForProgruzkaSilent();
+
+        //Открываем Quotation приложение
+        System.out.print("[-] Открываем приложение Prices");
+        open(props.getProperty("baseURL")+"/application/olta.prices");
+        //Ждём пока загрузится страница и проподёт "Loading..."
+        commonCode.WaitForPageToLoad(driver);
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(" - готово");
+
+        //Открываем групповые цены на отели
+        System.out.print("[-] Открываем групповые цены");
+        $(By.id("group")).click();
+        //Открываем текущий день
+        DateTimeFormatter formatForDate = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                .withLocale(Locale.UK).withZone(ZoneOffset.UTC);
+        DateTimeFormatter formatForPrices = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                .withLocale(Locale.UK).withZone(ZoneOffset.UTC);
+        LocalDate nowDate = LocalDate.now();
+        LocalDate tommorrow = nowDate.plus(1, ChronoUnit.DAYS);
+
+        //Открываем Москву
+        System.out.print("[-] Открываем Москву");
+        $(By.xpath("//div[@id=\"switch-city\"]//button[@data-switch-value=\"MSK\"]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+
+        //Открываем текущий год
+        $(By.xpath("//div[@id=\"switch-year\"]//button[contains(text(),'2017')]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+
+        //Выставляем тип отеля - Hotel 4* central
+        $(By.xpath("//select[@id=\"hotel-type-filter\"]")).selectOptionContainingText("Hotel 4* central");
+        CommonCode.WaitForProgruzkaSilent();
+
+        $(By.xpath("//div[@id=\"content\"]//div[@id=\"hotel-calendar\"]//div[@data-year=\"2017\"]" +
+                "//div//table//tbody//tr" +
+                "//td[@data-date=\""+nowDate.format(formatForPrices)+"\"]")).click();
+
+        ArrayList<PeriodsCollection> prices = new ArrayList<>();
+
+        $(By.xpath("//div[@class=\"modal-dialog\"]//div[@class=\"modal-content\"]")).shouldBe(visible);
+        //Сохраняем значения из попапа
+        String dateFrom = $(By.xpath("//div[@class=\"modal-dialog\"]//div[@class=\"modal-content\"]//form[@id=\"form-update-group-hotel-price\"]//input[@id=\"u-dateFrom\"]")).getValue();
+        String dateTo = $(By.xpath("//div[@class=\"modal-dialog\"]//div[@class=\"modal-content\"]//form[@id=\"form-update-group-hotel-price\"]//input[@id=\"u-dateTo\"]")).getValue();
+        String priceSGL = $(By.xpath("//div[@class=\"modal-dialog\"]//div[@class=\"modal-content\"]//form[@id=\"form-update-group-hotel-price\"]//input[@id=\"u-priceSgl\"]")).getValue();
+        String priceDBL = $(By.xpath("//div[@class=\"modal-dialog\"]//div[@class=\"modal-content\"]//form[@id=\"form-update-group-hotel-price\"]//input[@id=\"u-priceDbl\"]")).getValue();
+        String priceSGLWE = $(By.xpath("//div[@class=\"modal-dialog\"]//div[@class=\"modal-content\"]//form[@id=\"form-update-group-hotel-price\"]//input[@id=\"u-priceSglWe\"]")).getValue();
+        String priceDBLWE = $(By.xpath("//div[@class=\"modal-dialog\"]//div[@class=\"modal-content\"]//form[@id=\"form-update-group-hotel-price\"]//input[@id=\"u-priceDblWe\"]")).getValue();
+
+        //Сохраняем значения в новый элемент списка
+        prices.add(new PeriodsCollection(dateFrom, dateTo, priceSGL, priceDBL, priceSGLWE, priceDBLWE));
+
+        //System.out.println(dateFrom+" "+dateTo+" "+priceSGL+" "+priceDBL+" "+priceSGLWE+" "+priceDBLWE);
+        //Закрываем попап
+        $(By.xpath("//div[@class=\"modal-dialog\"]//div[@class=\"modal-content\"]//div[@class=\"modal-footer\"]//button[3]")).click();
+        $(By.xpath("//div[@class=\"modal-dialog\"]//div[@class=\"modal-content\"]")).shouldNotBe(visible);
+
+        $(By.xpath("//div[@id=\"profile\"]")).click();
+        $(By.xpath("//button[@id=\"btn-logout\"]")).shouldBe(Condition.visible).click();
+
+        System.out.print("[-] Открываем URL: "+props.getProperty("baseURL")+"/application/rfq.rfq");
+        open(props.getProperty("baseURL")+"/application/rfq.rfq");
         commonCode.WaitForPageToLoad(driver);
         System.out.println(CommonCode.OK);
 
@@ -91,15 +199,18 @@ public class BaseScenario1 {
         System.out.print("[-] Выставляем валюту - RUB: ");
         $(By.cssSelector(NewQuotationPage.Options.currencyButton)).click();
         $(By.cssSelector(NewQuotationPage.Options.currencySelectors)).shouldBe(Condition.visible);
-        $(By.cssSelector(NewQuotationPage.Options.currencyRUB)).click();
+        $(By.xpath(NewQuotationPage.Options.currencyRUBXP)).click();
+        $(By.xpath(NewQuotationPage.Options.currencyRUBXP)).click();
+        $(By.xpath(NewQuotationPage.Options.currencyRUBXP)).shouldNotBe(Condition.visible);
         CommonCode.WaitForProgruzkaSilent();
+
         System.out.println(CommonCode.OK);
 
         //Выставляем Nights
-        System.out.print("[-] Выставляем 2 ночи: ");
-        $(By.cssSelector(NewQuotationPage.Options.nightsButton)).click();
-        $(By.cssSelector(NewQuotationPage.Options.nightsInput)).shouldBe(Condition.visible);
-        $(By.cssSelector(NewQuotationPage.Options.nightsInput)).setValue("2");
+        System.out.print("[-] Выставляем 1 ночь: ");
+        $(By.xpath(NewQuotationPage.Options.nightsButtonXP)).click();
+        $(By.xpath(NewQuotationPage.Options.nightsInputXP)).shouldBe(Condition.visible);
+        $(By.xpath(NewQuotationPage.Options.nightsInputXP)).setValue("1");
         CommonCode.WaitForProgruzkaSilent();
         System.out.println(CommonCode.OK);
 
@@ -125,6 +236,7 @@ public class BaseScenario1 {
         $(By.cssSelector(NewQuotationPage.Options.guidesLanguageButton)).click();
         $(By.cssSelector(NewQuotationPage.Options.guidesLanguageArea)).shouldBe(Condition.visible);
         $(By.cssSelector(NewQuotationPage.Options.guidesLanguageEnglish)).click();
+        $(By.cssSelector(NewQuotationPage.Options.guidesLanguageEnglish)).click();
         CommonCode.WaitForProgruzkaSilent();
         System.out.println(CommonCode.OK);
 
@@ -137,15 +249,13 @@ public class BaseScenario1 {
         System.out.println(CommonCode.OK);
 
         //Заполняем даты
-        Date nowDate = new Date();
-        SimpleDateFormat formatForDateNow = new SimpleDateFormat("dd-MM-yyyy");
-        System.out.print("[-] Заполняем " +formatForDateNow.format(nowDate)+ " и плюс 4 дня: ");
+        System.out.print("[-] Заполняем " +formatForDate.format(nowDate)+ " и плюс 4 дня: ");
         //Кликаем на поле для ввода даты
         $(By.cssSelector(NewQuotationPage.Dates.firstIntervalFromInput)).click();
 
         //System.out.println("Текущая дата: " + formatForDateNow.format(nowDate));
         //Вводим дату в поле
-        $(By.cssSelector(NewQuotationPage.Dates.firstIntervalFromInput)).setValue(formatForDateNow.format(nowDate)).pressEnter();
+        $(By.cssSelector(NewQuotationPage.Dates.firstIntervalFromInput)).setValue(formatForDate.format(nowDate)).pressEnter();
         CommonCode.WaitForProgruzkaSilent();
         System.out.println(CommonCode.OK);
 
@@ -178,7 +288,7 @@ public class BaseScenario1 {
                 + NewQuotationPage.Itinerary.serviceByNumberXP(4)
                 + "//div[@class=\"service-names-list check-wrapper\"]"
                 + "//div[@class=\"check-list scroll-pane jspScrollable\"]/div[@class=\"jspContainer\"]"
-                + "//div[@group-value=\"B\"]//div[@data-value=\"Bunker-42\"]")).click();
+                + "//div[@group-value=\"B\"]//div[@data-value=\"BUNKER-42\"]")).click();
         CommonCode.WaitForProgruzkaSilent();
         System.out.println(CommonCode.OK);
 
@@ -203,7 +313,7 @@ public class BaseScenario1 {
                 + NewQuotationPage.Itinerary.serviceByNumberXP(4)
                 + "//div[@class=\"check-wrapper service-names-list\"]"
                 + "//div[@class=\"check-list scroll-pane\"]/div[@class=\"jspContainer\"]/div[@class=\"jspPane\"]"
-                + "//div[@data-value=\"Bolshoi theatre\"]")).click();
+                + "//div[@data-value=\"BOLSHOI THEATRE\"]")).click();
         CommonCode.WaitForProgruzkaSilent();
         System.out.println(CommonCode.OK);
 
@@ -219,6 +329,32 @@ public class BaseScenario1 {
         Расчитать стоимость тура
         Сгенерировать программу (web-версия + doc-версия)
         */
+
+        $(By.id("result")).scrollTo();
+        Double hotelsWE;
+        System.out.println("[-] Проверяем, что цены в Totals верные:");
+
+            //hotelsWE = (Double.valueOf(prices.get(0).priceDBLWE)+Double.valueOf(prices.get(1).priceDBLWE))/4.0;
+            hotelsWE = Double.valueOf((new BigDecimal(Double.valueOf(prices.get(0).priceDBL)/2.0).setScale(0, RoundingMode.DOWN).floatValue())
+                    + (new BigDecimal(Double.valueOf(prices.get(0).priceSGL)/15.0).setScale(0, RoundingMode.DOWN).floatValue()));
+
+            //hotelsWE = hotelsWE / rubEur;
+            hotelsWE = hotelsWE / 0.85;
+            String priceDBLDS = String.valueOf((int) new BigDecimal(hotelsWE).setScale(0, RoundingMode.DOWN).floatValue());
+
+            String result = $(By.cssSelector("table#table-result-totals tbody tr:nth-of-type(2) td:nth-of-type(2)")).getText();
+            //result = result.substring(0, result.indexOf('€'));
+        System.out.println("Из Prices получили:"+priceDBLDS+" в Totals:"+ result);
+           /* if (result.equals(priceDBLDS)){
+                System.out.println(CommonCode.ANSI_GREEN+"      Ошибки нет, значение у периода "+periodsCounter+" корректное + "+CommonCode.ANSI_RESET);
+            } else {
+                softAssertions.assertThat(result)
+                        .as("Check that value in Hotels (WE) for 15, for period "+periodsCounter+",is correct")
+                        .isEqualTo(priceDBLDS);
+                System.out.println(CommonCode.ANSI_RED +"      Значение у периода "+periodsCounter+" не некорректные: " + CommonCode.ANSI_RESET
+                        + result + " -");
+            }*/
+
 
     }
 

@@ -16,14 +16,19 @@ public class NewQuotationPage extends QuotationListPage{
     }
 
     public final static String optionsArea = "#options div[class=\"options-row\"]";
+    public final static String optionsAreaXP = "//div[@id=\"options\"]//div[@class=\"options-row\"]";
     public static class Options{
 
         public final static String currencyButton = optionsArea+ " div[class=\"options-col have-list value-null\"]";
         public final static String currencySelectors = optionsArea+ " div[class=\"check-list\"]";
+        public final static String currencySelectorsXP = optionsAreaXP+ "//div[@class=\"check-list\"]";
         public final static String currencyRUB = currencySelectors+ " div[data-value=\"RUB\"]";
+        public final static String currencyRUBXP = currencySelectorsXP+ "//div[@data-value=\"RUB\"]";
 
         public final static String nightsButton = optionsArea+ ":nth-child(3) div[class=\"options-col have-string value-null\"]";
+        public final static String nightsButtonXP = optionsAreaXP+ "[2]//div[@class=\"options-col have-string value-null\"]";
         public final static String nightsInput = optionsArea+ ":nth-child(3) div input[data-optionkey=\"number_of_nights\"]";
+        public final static String nightsInputXP = optionsAreaXP+ "[2]//div//input[@data-optionkey=\"number_of_nights\"]";
 
         public final static String presentMealServicesButton = optionsArea+ ":nth-child(4) div[class=\"options-col have-list value-null\"]";
         public final static String presentMealServicesSelectors = presentMealServicesButton+ " div[class=\"check-list\"]";
