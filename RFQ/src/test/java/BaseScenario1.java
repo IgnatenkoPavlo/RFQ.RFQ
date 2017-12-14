@@ -139,7 +139,7 @@ public class BaseScenario1 {
         System.out.println(CommonCode.OK);
 
         //Открываем попап с ценами
-        System.out.print("[-] Выставляем тип отеля - Hotel 4* central");
+        System.out.print("[-] Открываем попап с ценами");
         $(By.xpath("//div[@id=\"content\"]//div[@id=\"hotel-calendar\"]//div[@data-year=\"2017\"]" +
                 "//div//table//tbody//tr" +
                 "//td[@data-date=\""+nowDate.format(formatForPrices)+"\"]")).click();
@@ -189,6 +189,7 @@ public class BaseScenario1 {
         System.out.print("[-] Сохраняем цену за экскурсию - Бункер 42");
         String priceForBunker42 = $(By.xpath("//table[@id=\"service-prices\"]//tbody//tr[@data-excursion-id=\"3\"]" +
                 "//td[@class=\"editable editable-service-price price\"]")).getText();
+        System.out.println(" "+priceForBunker42+" ");
         System.out.println(CommonCode.OK);
 
         //Открываем Шоу
@@ -212,6 +213,7 @@ public class BaseScenario1 {
         System.out.print("[-] Сохраняем цену за Шоу - Большой Театр");
         String priceForBolshoiTheatre = $(By.xpath("//table[@id=\"service-prices\"]//tbody//tr[@data-excursion-id=\"75\"]" +
                 "//td[@class=\"editable editable-service-price price\"]")).getText();
+        System.out.println(" "+priceForBolshoiTheatre+" ");
         System.out.println(CommonCode.OK);
 
         //Выходим из Prices
@@ -357,7 +359,7 @@ public class BaseScenario1 {
         System.out.println(CommonCode.OK);
 
         //В второй день добавить экскурсию Большой театр
-        System.out.print("[-] Во второй день добавляем экскурсию - Большой Театр: ");
+        /*System.out.print("[-] Во второй день добавляем экскурсию - Большой Театр: ");
         $(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(2,1)
                 + NewQuotationPage.Itinerary.ServiceAddButton)).scrollTo().click();
         $(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(2,1)
@@ -379,12 +381,12 @@ public class BaseScenario1 {
                 + "//div[@class=\"check-list scroll-pane\"]/div[@class=\"jspContainer\"]/div[@class=\"jspPane\"]"
                 + "//div[@data-value=\"BOLSHOI THEATRE\"]")).click();
         CommonCode.WaitForProgruzkaSilent();
-        System.out.println(CommonCode.OK);
+        System.out.println(CommonCode.OK);*/
 
 
 
         //Запускаем расчёт
-        System.out.print("Запускаем расчёт: ");
+        System.out.print("[-] Запускаем расчёт: ");
         $(By.xpath(NewQuotationPage.Results.calculateButton)).scrollTo().click();
         CommonCode.WaitForProgruzkaSilent();
         System.out.println(CommonCode.OK);
@@ -399,25 +401,38 @@ public class BaseScenario1 {
         System.out.println("[-] Проверяем, что цены в Totals верные:");
 
             //hotelsWE = (Double.valueOf(prices.get(0).priceDBLWE)+Double.valueOf(prices.get(1).priceDBLWE))/4.0;
+        if(nowDate.getDayOfWeek().getValue() >= 1 & nowDate.getDayOfWeek().getValue()<=4){
             hotelsWE = Double.valueOf((new BigDecimal(Double.valueOf(prices.get(0).priceDBL)/2.0).setScale(0, RoundingMode.DOWN).floatValue())
                     + (new BigDecimal(Double.valueOf(prices.get(0).priceSGL)/15.0).setScale(0, RoundingMode.DOWN).floatValue()));
-            hotelsWE = hotelsWE + Double.valueOf(priceForBunker42) + Double.valueOf(priceForBolshoiTheatre);
+        }
+        else{
+            hotelsWE = Double.valueOf((new BigDecimal(Double.valueOf(prices.get(0).priceDBLWE)/2.0).setScale(0, RoundingMode.DOWN).floatValue())
+                    + (new BigDecimal(Double.valueOf(prices.get(0).priceSGLWE)/15.0).setScale(0, RoundingMode.DOWN).floatValue()));
+        }
+            /*hotelsWE = hotelsWE + Double.valueOf(priceForBunker42) +  Double.valueOf(priceForBunker42)/15.0
+                    + Double.valueOf(priceForBolshoiTheatre) + Double.valueOf(priceForBolshoiTheatre)/15.0
+                    + 2500.0/15.0 + 850.0/15.0
+                    + 2500.0/15.0 + 850.0/15.0;*/
+
+        hotelsWE = hotelsWE + Double.valueOf(priceForBunker42) + Double.valueOf(priceForBunker42)/15.0
+                + 2500.0/15.0 + 850.0/15.0;
+        hotelsWE = Double.valueOf(new BigDecimal(hotelsWE).setScale(0, RoundingMode.DOWN).floatValue());
             //hotelsWE = hotelsWE / rubEur;
             hotelsWE = hotelsWE / 0.85;
             String priceDBLDS = String.valueOf((int) new BigDecimal(hotelsWE).setScale(0, RoundingMode.DOWN).floatValue());
 
             String result = $(By.cssSelector("table#table-result-totals tbody tr:nth-of-type(2) td:nth-of-type(2)")).getText();
-            //result = result.substring(0, result.indexOf('€'));
-        System.out.println("Из Prices получили:"+priceDBLDS+" в Totals:"+ result);
-           /* if (result.equals(priceDBLDS)){
-                System.out.println(CommonCode.ANSI_GREEN+"      Ошибки нет, значение у периода "+periodsCounter+" корректное + "+CommonCode.ANSI_RESET);
+            result = result.substring(0, result.indexOf(' '));
+        //System.out.println("Из Prices получили:"+priceDBLDS+" в Totals:"+ result);
+           if (result.equals(priceDBLDS)){
+                System.out.println(CommonCode.ANSI_GREEN+"      Ошибки нет, значение для группы 15 корректное + "+CommonCode.ANSI_RESET);
             } else {
                 softAssertions.assertThat(result)
-                        .as("Check that value in Hotels (WE) for 15, for period "+periodsCounter+",is correct")
+                        .as("Check that value in Hotels for 15, is correct")
                         .isEqualTo(priceDBLDS);
-                System.out.println(CommonCode.ANSI_RED +"      Значение у периода "+periodsCounter+" не некорректные: " + CommonCode.ANSI_RESET
+                System.out.println(CommonCode.ANSI_RED +"      Значение для группы 15 не некорректные: " + CommonCode.ANSI_RESET
                         + result + " -");
-            }*/
+            }
 
 
     }
