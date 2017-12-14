@@ -85,7 +85,7 @@ public class BaseScenario1 {
         System.out.print("[-] Открываем URL: "+props.getProperty("baseURL"));
         open(props.getProperty("baseURL"));
         commonCode.WaitForPageToLoad(driver);
-        System.out.println(" - готово");
+        System.out.println(CommonCode.OK);
 
 
         //Вводим логин с паролем и кликаем Логин
@@ -93,7 +93,7 @@ public class BaseScenario1 {
         $(By.id("username")).setValue("test");
         $(By.id("password")).setValue("password");
         $(By.cssSelector("button[type=\"submit\"]")).click();
-        System.out.println(" - готово");
+        System.out.println(CommonCode.OK);
 
         //Ждём пока загрузится страница и проподёт "Loading..."
         commonCode.WaitForPageToLoad(driver);
@@ -101,11 +101,12 @@ public class BaseScenario1 {
 
         //Открываем Quotation приложение
         System.out.print("[-] Открываем приложение Prices");
-        open(props.getProperty("baseURL")+"/application/olta.prices");
+        open(String.valueOf(props.getProperty("baseURL"))+"/application/olta.prices");
         //Ждём пока загрузится страница и проподёт "Loading..."
         commonCode.WaitForPageToLoad(driver);
         CommonCode.WaitForProgruzkaSilent();
-        System.out.println(" - готово");
+        System.out.println(CommonCode.OK);
+
 
         //Открываем групповые цены на отели
         System.out.print("[-] Открываем групповые цены");
@@ -117,24 +118,35 @@ public class BaseScenario1 {
                 .withLocale(Locale.UK).withZone(ZoneOffset.UTC);
         LocalDate nowDate = LocalDate.now();
         LocalDate tommorrow = nowDate.plus(1, ChronoUnit.DAYS);
+        System.out.println(CommonCode.OK);
 
         //Открываем Москву
         System.out.print("[-] Открываем Москву");
         $(By.xpath("//div[@id=\"switch-city\"]//button[@data-switch-value=\"MSK\"]")).click();
         CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
 
         //Открываем текущий год
+        System.out.print("[-] Открываем текущий год");
         $(By.xpath("//div[@id=\"switch-year\"]//button[contains(text(),'2017')]")).click();
         CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
 
         //Выставляем тип отеля - Hotel 4* central
+        System.out.print("[-] Выставляем тип отеля - Hotel 4* central");
         $(By.xpath("//select[@id=\"hotel-type-filter\"]")).selectOptionContainingText("Hotel 4* central");
         CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
 
+        //Открываем попап с ценами
+        System.out.print("[-] Выставляем тип отеля - Hotel 4* central");
         $(By.xpath("//div[@id=\"content\"]//div[@id=\"hotel-calendar\"]//div[@data-year=\"2017\"]" +
                 "//div//table//tbody//tr" +
                 "//td[@data-date=\""+nowDate.format(formatForPrices)+"\"]")).click();
+        System.out.println(CommonCode.OK);
 
+        //Сохраняем цены
+        System.out.print("[-] Сохраняем цены");
         ArrayList<PeriodsCollection> prices = new ArrayList<>();
 
         $(By.xpath("//div[@class=\"modal-dialog\"]//div[@class=\"modal-content\"]")).shouldBe(visible);
@@ -149,14 +161,66 @@ public class BaseScenario1 {
         //Сохраняем значения в новый элемент списка
         prices.add(new PeriodsCollection(dateFrom, dateTo, priceSGL, priceDBL, priceSGLWE, priceDBLWE));
 
+
         //System.out.println(dateFrom+" "+dateTo+" "+priceSGL+" "+priceDBL+" "+priceSGLWE+" "+priceDBLWE);
         //Закрываем попап
         $(By.xpath("//div[@class=\"modal-dialog\"]//div[@class=\"modal-content\"]//div[@class=\"modal-footer\"]//button[3]")).click();
         $(By.xpath("//div[@class=\"modal-dialog\"]//div[@class=\"modal-content\"]")).shouldNotBe(visible);
+        System.out.println(CommonCode.OK);
 
+        //Открываем Экскурсии
+        System.out.print("[-] Открываем Экскурсии");
+        $(By.id("excursions")).click();
+        System.out.println(CommonCode.OK);
+
+        //Открываем Москву
+        System.out.print("[-] Открываем Москву");
+        $(By.xpath("//div[@id=\"switch-city\"]//button[@data-switch-value=\"MSK\"]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        //Открываем текущий год
+        System.out.print("[-] Открываем текущий год");
+        $(By.xpath("//div[@id=\"switch-year\"]//button[contains(text(),'2017')]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        //Сохраняем цену за экскурсию - Бункер 42
+        System.out.print("[-] Сохраняем цену за экскурсию - Бункер 42");
+        String priceForBunker42 = $(By.xpath("//table[@id=\"service-prices\"]//tbody//tr[@data-excursion-id=\"3\"]" +
+                "//td[@class=\"editable editable-service-price price\"]")).getText();
+        System.out.println(CommonCode.OK);
+
+        //Открываем Шоу
+        System.out.print("[-] Открываем Шоу");
+        $(By.id("shows")).click();
+        System.out.println(CommonCode.OK);
+
+        //Открываем Москву
+        System.out.print("[-] Открываем Москву");
+        $(By.xpath("//div[@id=\"switch-city\"]//button[@data-switch-value=\"MSK\"]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        //Открываем текущий год
+        System.out.print("[-] Открываем текущий год");
+        $(By.xpath("//div[@id=\"switch-year\"]//button[contains(text(),'2017')]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        //Сохраняем цену за Шоу - Большой Театр
+        System.out.print("[-] Сохраняем цену за Шоу - Большой Театр");
+        String priceForBolshoiTheatre = $(By.xpath("//table[@id=\"service-prices\"]//tbody//tr[@data-excursion-id=\"75\"]" +
+                "//td[@class=\"editable editable-service-price price\"]")).getText();
+        System.out.println(CommonCode.OK);
+
+        //Выходим из Prices
+        System.out.print("[-] Выходим из Prices");
         $(By.xpath("//div[@id=\"profile\"]")).click();
         $(By.xpath("//button[@id=\"btn-logout\"]")).shouldBe(Condition.visible).click();
+        System.out.println(CommonCode.OK);
 
+        //Открываем клиентский RFQ
         System.out.print("[-] Открываем URL: "+props.getProperty("baseURL")+"/application/rfq.rfq");
         open(props.getProperty("baseURL")+"/application/rfq.rfq");
         commonCode.WaitForPageToLoad(driver);
@@ -337,7 +401,7 @@ public class BaseScenario1 {
             //hotelsWE = (Double.valueOf(prices.get(0).priceDBLWE)+Double.valueOf(prices.get(1).priceDBLWE))/4.0;
             hotelsWE = Double.valueOf((new BigDecimal(Double.valueOf(prices.get(0).priceDBL)/2.0).setScale(0, RoundingMode.DOWN).floatValue())
                     + (new BigDecimal(Double.valueOf(prices.get(0).priceSGL)/15.0).setScale(0, RoundingMode.DOWN).floatValue()));
-
+            hotelsWE = hotelsWE + Double.valueOf(priceForBunker42) + Double.valueOf(priceForBolshoiTheatre);
             //hotelsWE = hotelsWE / rubEur;
             hotelsWE = hotelsWE / 0.85;
             String priceDBLDS = String.valueOf((int) new BigDecimal(hotelsWE).setScale(0, RoundingMode.DOWN).floatValue());
