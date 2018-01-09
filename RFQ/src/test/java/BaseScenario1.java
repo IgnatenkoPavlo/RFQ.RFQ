@@ -90,7 +90,7 @@ public class BaseScenario1 {
 
         //Вводим логин с паролем и кликаем Логин
         System.out.print("[-] Вводим логин с паролем и кликаем Логин");
-        $(By.id("username")).setValue("test");
+        $(By.id("username")).setValue("alexkudrya91@gmail.com");
         $(By.id("password")).setValue("password");
         $(By.cssSelector("button[type=\"submit\"]")).click();
         System.out.println(CommonCode.OK);
@@ -128,19 +128,20 @@ public class BaseScenario1 {
 
         //Открываем текущий год
         System.out.print("[-] Открываем текущий год");
-        $(By.xpath("//div[@id=\"switch-year\"]//button[contains(text(),'2017')]")).click();
+        $(By.xpath("//div[@id=\"switch-year\"]//button[contains(text(),'2018')]")).click();
         CommonCode.WaitForProgruzkaSilent();
         System.out.println(CommonCode.OK);
 
         //Выставляем тип отеля - Hotel 4* central
         System.out.print("[-] Выставляем тип отеля - Hotel 4* central");
-        $(By.xpath("//select[@id=\"hotel-type-filter\"]")).selectOptionContainingText("Hotel 4* central");
+        //$(By.xpath("//select[@id=\"hotel-type-filter\"]")).selectOptionContainingText("Hotel 4* central");
+        $(By.xpath("//div[@id=\"switch-hotel-type\"]//button[contains(text(),'Hotel 4* central')]")).click();
         CommonCode.WaitForProgruzkaSilent();
         System.out.println(CommonCode.OK);
 
         //Открываем попап с ценами
         System.out.print("[-] Открываем попап с ценами");
-        $(By.xpath("//div[@id=\"content\"]//div[@id=\"hotel-calendar\"]//div[@data-year=\"2017\"]" +
+        $(By.xpath("//div[@id=\"content\"]//div[@id=\"hotel-calendar\"]//div[@data-year=\"2018\"]" +
                 "//div//table//tbody//tr" +
                 "//td[@data-date=\""+nowDate.format(formatForPrices)+"\"]")).click();
         System.out.println(CommonCode.OK);
@@ -181,7 +182,7 @@ public class BaseScenario1 {
 
         //Открываем текущий год
         System.out.print("[-] Открываем текущий год");
-        $(By.xpath("//div[@id=\"switch-year\"]//button[contains(text(),'2017')]")).click();
+        $(By.xpath("//div[@id=\"switch-year\"]//button[contains(text(),'2018')]")).click();
         CommonCode.WaitForProgruzkaSilent();
         System.out.println(CommonCode.OK);
 
@@ -205,7 +206,7 @@ public class BaseScenario1 {
 
         //Открываем текущий год
         System.out.print("[-] Открываем текущий год");
-        $(By.xpath("//div[@id=\"switch-year\"]//button[contains(text(),'2017')]")).click();
+        $(By.xpath("//div[@id=\"switch-year\"]//button[contains(text(),'2018')]")).click();
         CommonCode.WaitForProgruzkaSilent();
         System.out.println(CommonCode.OK);
 
@@ -413,9 +414,9 @@ public class BaseScenario1 {
                     + Double.valueOf(priceForBolshoiTheatre) + Double.valueOf(priceForBolshoiTheatre)/15.0
                     + 2500.0/15.0 + 850.0/15.0
                     + 2500.0/15.0 + 850.0/15.0;*/
-
+        // добавляем: цену экскурсии, цену гида и цену транфера
         hotelsWE = hotelsWE + Double.valueOf(priceForBunker42) + Double.valueOf(priceForBunker42)/15.0
-                + 2500.0/15.0 + 850.0/15.0;
+                + 3000.0/15.0 + 3000.0/15.0;
         hotelsWE = Double.valueOf(new BigDecimal(hotelsWE).setScale(0, RoundingMode.DOWN).floatValue());
             //hotelsWE = hotelsWE / rubEur;
             hotelsWE = hotelsWE / 0.85;
