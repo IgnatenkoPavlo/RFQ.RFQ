@@ -19,7 +19,7 @@ public class NewQuotationPage extends QuotationListPage{
     public final static String optionsAreaXP = "//div[@id=\"options\"]//div[@class=\"options-row\"]";
     public static class Options{
 
-        public final static String currencyButton = optionsArea+ " div[class=\"options-col have-list value-null\"]";
+        public final static String currencyButton = optionsArea+ " div[class=\"options-col have-list\"]";
         public final static String currencySelectors = optionsArea+ " div[class=\"check-list\"]";
         public final static String currencySelectorsXP = optionsAreaXP+ "//div[@class=\"check-list\"]";
         public final static String currencyRUB = currencySelectors+ " div[data-value=\"RUB\"]";
@@ -33,6 +33,7 @@ public class NewQuotationPage extends QuotationListPage{
         public final static String presentMealServicesButton = optionsArea+ ":nth-child(4) div[class=\"options-col have-list value-null\"]";
         public final static String presentMealServicesSelectors = presentMealServicesButton+ " div[class=\"check-list\"]";
         public final static String presentMealServiceFullBoard = presentMealServicesSelectors+ " div[data-value=\"FB\"]";
+        public final static String presentMealServiceNO = presentMealServicesSelectors+ " div[data-value=\"NO\"]";
 
         public final static String additionalServicesButton = optionsArea+ ":nth-child(5) div";
         public final static String additionalServicesSelectors = additionalServicesButton+" div[class=\"radio-list\"]";
