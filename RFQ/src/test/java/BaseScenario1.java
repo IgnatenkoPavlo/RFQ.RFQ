@@ -218,10 +218,58 @@ public class BaseScenario1 {
         System.out.println(CommonCode.OK);
 
         //Сохраняем цену за Гида
+        System.out.print("[-] Открываем Цены для Гида");
+        $(By.id("guides")).click();
+        System.out.println(CommonCode.OK);
 
+        //Открываем Москву
+        System.out.print("[-] Открываем Москву");
+        $(By.xpath("//div[@id=\"switch-city\"]//button[@data-switch-value=\"MSK\"]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        //Открываем текущий год
+        System.out.print("[-] Открываем текущий год");
+        $(By.xpath("//div[@id=\"switch-year\"]//button[contains(text(),'2018')]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        System.out.print("[-] Открываем язык Английский:");
+        $(By.xpath("//div[@id=\"switch-lang\"]//button[@data-switch-value=\"English\"]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        System.out.print("[-] Сохраняем сумму за - 1/2 DAY (4 HOURS):");
+        double guidePriceforHalfDay = Double.valueOf($(By.xpath("//table[@id=\"service-prices\"]//tbody//tr//td//a[contains(text(),'1/2 DAY (4 HOURS)')]/../../td[3]")).getText());
+        //System.out.println(guidePriceforHalfDay);
+        System.out.println(CommonCode.OK);
 
         //Сохраняем цену за Транспорт
+        System.out.print("[-] Открываем цены на транспорт:");
+        $(By.id("transport")).click();
+        System.out.println(CommonCode.OK);
 
+        //Открываем Москву
+        System.out.print("[-] Открываем Москву");
+        $(By.xpath("//div[@id=\"switch-city\"]//button[@data-switch-value=\"MSK\"]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        //Открываем текущий год
+        System.out.print("[-] Открываем текущий год");
+        $(By.xpath("//div[@id=\"switch-year\"]//button[contains(text(),'2018')]")).click();
+        CommonCode.WaitForProgruzkaSilent();
+        System.out.println(CommonCode.OK);
+
+        System.out.print("[-] Сохраняем сумму за 1 час для автобуса до 18 человек:");
+        double transportPriceHourly18 = Double.valueOf($(By.xpath("//table[@id=\"service-prices\"]//tbody//tr[@data-max-load=\"18\"]//td[@class=\"prices\"]/table/tbody//tr/td[@class=\"service-name\"]/span[contains(text(),'HOURLY')]/../..//td[2]")).getText());
+        //System.out.println(transportPriceHourly18);
+        System.out.println(CommonCode.OK);
+
+        System.out.print("[-] Сохраняем сумму за 1 час для автобуса до 44 человек:");
+        double transportPriceHourly44 = Double.valueOf($(By.xpath("//table[@id=\"service-prices\"]//tbody//tr[@data-max-load=\"44\"]//td[@class=\"prices\"]/table/tbody//tr/td[@class=\"service-name\"]/span[contains(text(),'HOURLY')]/../..//td[2]")).getText());
+        //System.out.println(transportPriceHourly44);
+        System.out.println(CommonCode.OK);
 
         //Выходим из Prices
         System.out.print("[-] Выходим из Prices");
@@ -428,37 +476,80 @@ public class BaseScenario1 {
         // добавляем: цену экскурсии, цену гида и цену транфера
         /*hotelsWE = hotelsWE + Double.valueOf(priceForBunker42) + Double.valueOf(priceForBunker42)/15.0
                 + 3000.0/15.0 + 3000.0/15.0;*/
-        hotelsWE = hotelsWE + Double.valueOf(priceForBunker42) + 66.0 + 200.0;
+        double hotelsWE15 = hotelsWE + Double.valueOf(priceForBunker42)
+                + Double.valueOf((new BigDecimal(guidePriceforHalfDay/15.0).setScale(0, RoundingMode.DOWN).floatValue()))
+                + Double.valueOf((new BigDecimal(transportPriceHourly18/15.0).setScale(0, RoundingMode.DOWN).floatValue()));
+        double hotelsWE20 = hotelsWE + Double.valueOf(priceForBunker42)
+                + Double.valueOf((new BigDecimal(guidePriceforHalfDay/20.0).setScale(0, RoundingMode.DOWN).floatValue()))
+                + Double.valueOf((new BigDecimal(transportPriceHourly44/20.0).setScale(0, RoundingMode.DOWN).floatValue()));
+        double hotelsWE25 = hotelsWE + Double.valueOf(priceForBunker42)
+                + Double.valueOf((new BigDecimal(guidePriceforHalfDay/25.0).setScale(0, RoundingMode.DOWN).floatValue()))
+                + Double.valueOf((new BigDecimal(transportPriceHourly44/25.0).setScale(0, RoundingMode.DOWN).floatValue()));
+
         //hotelsWE = Double.valueOf(new BigDecimal(hotelsWE).setScale(0, RoundingMode.DOWN).floatValue());
             //hotelsWE = hotelsWE / rubEur;
-        hotelsWE = hotelsWE / 0.85;
+        hotelsWE15 = hotelsWE15 / 0.85;
+        hotelsWE20 = hotelsWE20 / 0.85;
+        hotelsWE25 = hotelsWE25 / 0.85;
         hotelsWESS = hotelsWESS / 0.85;
-        String priceDBLDS = String.valueOf((int) new BigDecimal(hotelsWE).setScale(0, RoundingMode.HALF_UP).floatValue());
+        String priceDBLDS15 = String.valueOf((int) new BigDecimal(hotelsWE15).setScale(0, RoundingMode.HALF_UP).floatValue());
+        String priceDBLDS20 = String.valueOf((int) new BigDecimal(hotelsWE20).setScale(0, RoundingMode.HALF_UP).floatValue());
+        String priceDBLDS25 = String.valueOf((int) new BigDecimal(hotelsWE25).setScale(0, RoundingMode.HALF_UP).floatValue());
         String priceDBLDSSS = String.valueOf((int) new BigDecimal(hotelsWESS).setScale(0, RoundingMode.HALF_UP).floatValue());
 
+        //Проверяем для группы 15 человек
         String result = $(By.cssSelector("table#table-result-totals tbody tr:nth-of-type(2) td:nth-of-type(2)")).getText();
         result = result.substring(0, result.indexOf(' '));
-        //System.out.println("Из Prices получили:"+priceDBLDS+" в Totals:"+ result);
-           if (result.equals(priceDBLDS)){
+        //System.out.println("Из Prices получили:"+priceDBLDS15+" в Totals:"+ result);
+        if (result.equals(priceDBLDS15)){
                 System.out.println(CommonCode.ANSI_GREEN+"      Ошибки нет, значение для группы 15 корректное + "+CommonCode.ANSI_RESET);
-            } else {
+        } else {
                 softAssertions.assertThat(result)
                         .as("Check that value in Hotels for 15, is correct")
-                        .isEqualTo(priceDBLDS);
+                        .isEqualTo(priceDBLDS15);
                 System.out.println(CommonCode.ANSI_RED +"      Значение для группы 15 не некорректное: " + CommonCode.ANSI_RESET
                         + result + " -");
-            }
+        }
 
+        //Проверяем для группы 20 человек
+        result = $(By.cssSelector("table#table-result-totals tbody tr:nth-of-type(2) td:nth-of-type(3)")).getText();
+        result = result.substring(0, result.indexOf(' '));
+        //System.out.println("Из Prices получили:"+priceDBLDS20+" в Totals:"+ result);
+        if (result.equals(priceDBLDS20)){
+            System.out.println(CommonCode.ANSI_GREEN+"      Ошибки нет, значение для группы 20 корректное + "+CommonCode.ANSI_RESET);
+        } else {
+            softAssertions.assertThat(result)
+                    .as("Check that value in Hotels for 20, is correct")
+                    .isEqualTo(priceDBLDS20);
+            System.out.println(CommonCode.ANSI_RED +"      Значение для группы 20 не некорректное: " + CommonCode.ANSI_RESET
+                    + result + " -");
+        }
+
+        //Проверяем для группы 25 человек
+        result = $(By.cssSelector("table#table-result-totals tbody tr:nth-of-type(2) td:nth-of-type(4)")).getText();
+        result = result.substring(0, result.indexOf(' '));
+        //System.out.println("Из Prices получили:"+priceDBLDS25+" в Totals:"+ result);
+        if (result.equals(priceDBLDS25)){
+            System.out.println(CommonCode.ANSI_GREEN+"      Ошибки нет, значение для группы 25 корректное + "+CommonCode.ANSI_RESET);
+        } else {
+            softAssertions.assertThat(result)
+                    .as("Check that value in Hotels for 25, is correct")
+                    .isEqualTo(priceDBLDS25);
+            System.out.println(CommonCode.ANSI_RED +"      Значение для группы 25 не некорректное: " + CommonCode.ANSI_RESET
+                    + result + " -");
+        }
+
+        //Проверяем для SS
         result = $(By.cssSelector("table#table-result-totals tbody tr:nth-of-type(2) td:nth-of-type(5)")).getText();
         result = result.substring(0, result.indexOf(' '));
         //System.out.println("Из Prices получили:"+priceDBLDS+" в Totals:"+ result);
         if (result.equals(priceDBLDSSS)){
-            System.out.println(CommonCode.ANSI_GREEN+"      Ошибки нет, значение для группы SS корректное + "+CommonCode.ANSI_RESET);
+            System.out.println(CommonCode.ANSI_GREEN+"      Ошибки нет, значение SS корректное + "+CommonCode.ANSI_RESET);
         } else {
             softAssertions.assertThat(result)
                     .as("Check that value in Hotels for SS, is correct")
                     .isEqualTo(priceDBLDSSS);
-            System.out.println(CommonCode.ANSI_RED +"      Значение для группы SS не некорректное: " + CommonCode.ANSI_RESET
+            System.out.println(CommonCode.ANSI_RED +"      Значение SS не некорректное: " + CommonCode.ANSI_RESET
                     + result + " -");
         }
 
