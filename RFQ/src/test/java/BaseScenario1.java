@@ -217,6 +217,12 @@ public class BaseScenario1 {
         System.out.println(" "+priceForBolshoiTheatre+" ");
         System.out.println(CommonCode.OK);
 
+        //Сохраняем цену за Гида
+
+
+        //Сохраняем цену за Транспорт
+
+
         //Выходим из Prices
         System.out.print("[-] Выходим из Prices");
         $(By.xpath("//div[@id=\"profile\"]")).click();
