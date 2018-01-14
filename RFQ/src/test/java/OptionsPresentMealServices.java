@@ -146,7 +146,7 @@ public class OptionsPresentMealServices {
             errorText = "none";
             //Выбираем Present Meal Service
             System.out.println("[-] Выставляем Preset Meal Services - "+presentMealServices[i]+": ");
-            $(By.cssSelector(NewQuotationPage.Options.presentMealServicesButton)).click();
+            $(By.cssSelector(NewQuotationPage.Options.presentMealServicesButton)).scrollTo().click();
             $(By.cssSelector(NewQuotationPage.Options.presentMealServicesButton)).click();
             $(By.cssSelector(NewQuotationPage.Options.presentMealServicesSelectors)).shouldBe(Condition.visible);
             $(By.cssSelector(NewQuotationPage.Options.presentMealServicesSelectors+ " div[data-value=\""+presentMealServices[i]+"\"]")).click();
@@ -176,6 +176,7 @@ public class OptionsPresentMealServices {
                 CommonCode.WaitForProgruzkaSilent();
 
                 //Проверяем что добавились нужные автосервисы
+
             }
             else{
                 softAssertions.assertThat(errorText)
