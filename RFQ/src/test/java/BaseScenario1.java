@@ -371,7 +371,7 @@ public class BaseScenario1 {
         System.out.println(CommonCode.OK);*/
 
         //Заполняем даты
-        System.out.print("[-] Заполняем " +formatForDate.format(nowDate)+ " и плюс 4 дня: ");
+        System.out.print("[-] Заполняем дату From: " +formatForDate.format(nowDate)+ " ");
         //Кликаем на поле для ввода даты
         $(By.cssSelector(NewQuotationPage.Dates.firstIntervalFromInput)).click();
 

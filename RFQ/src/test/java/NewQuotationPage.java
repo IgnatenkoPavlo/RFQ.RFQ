@@ -30,7 +30,7 @@ public class NewQuotationPage extends QuotationListPage{
         public final static String nightsInput = optionsArea+ ":nth-child(3) div input[data-optionkey=\"number_of_nights\"]";
         public final static String nightsInputXP = optionsAreaXP+ "[2]//div//input[@data-optionkey=\"number_of_nights\"]";
 
-        public final static String presentMealServicesButton = optionsArea+ ":nth-child(4) div[class=\"options-col have-list value-null\"]";
+        public final static String presentMealServicesButton = optionsArea+ ":nth-child(4) div";
         public final static String presentMealServicesSelectors = presentMealServicesButton+ " div[class=\"check-list\"]";
         public final static String presentMealServiceFullBoard = presentMealServicesSelectors+ " div[data-value=\"FB\"]";
         public final static String presentMealServiceNO = presentMealServicesSelectors+ " div[data-value=\"NO\"]";
