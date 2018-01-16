@@ -21,9 +21,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.confirm;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.url;
 
 public class OptionsPresentMealServices {
@@ -169,13 +167,70 @@ public class OptionsPresentMealServices {
 
             if(errorText.equals("none")){
                 System.out.println(CommonCode.ANSI_GREEN+"      Базовая генерация прошла + "+CommonCode.ANSI_RESET);
-                //Удаляем город из Accomodations
-                $(By.xpath("//div[@id=\"accommodationsBlock\"]//div[@class=\"info-row\"]")).hover();
-                $(By.xpath("//div[@id=\"accommodationsBlock\"]//div[@class=\"info-row\"]//div[@class=\"delete-btn\"]")).hover().click();
-                confirm();
-                CommonCode.WaitForProgruzkaSilent();
+
+                int servicesCount1=0;
+                int servicesCount2=0;
+                servicesCount1 = $$(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(1, 1)
+                        +"//div[2]//div[@class=\"dayCityServices ui-sortable\"]/div")).size();
+                //System.out.println(servicesCount1);
+                servicesCount2 = $$(By.xpath(NewQuotationPage.Itinerary.DayCityByNumberXP(2, 1)
+                        +"//div[2]//div[@class=\"dayCityServices ui-sortable\"]/div")).size();
+                //System.out.println(servicesCount2);
+
+                int servicesCountMust1 = 0;
+                int servicesCountMust2 = 0;
+
+                if(presentMealServices[i].equals("NO")){
+                    //Проверить что питание не добавилось
+                    servicesCountMust1 = 0;
+                    servicesCountMust2 = 0;
+                }
+
+                if(presentMealServices[i].equals("BB")){
+                    //Проверить что добавились BREAKFAST + LUNCH
+                    servicesCountMust1 = 1;
+                    servicesCountMust2 = 2;
+                }
+
+                if(presentMealServices[i].equals("HB")){
+                    //Проверить что добавились BREAKFAST + DINNER
+                    servicesCountMust1 = 1;
+                    servicesCountMust2 = 2;
+                }
+
+                if(presentMealServices[i].equals("FB")){
+                    //Проверить что добавились BREAKFAST + LUNCH + DINNER
+                    servicesCountMust1 = 2;
+                    servicesCountMust2 = 3;
+                }
 
                 //Проверяем что добавились нужные автосервисы
+                //System.out.println("Из Prices получили:"+priceDBLDS15+" в Totals:"+ result);
+                if ((servicesCount1-2) == servicesCountMust1){
+                    System.out.println(CommonCode.ANSI_GREEN+"      Колличество сервисов питания в первом дне верное + "+CommonCode.ANSI_RESET);
+                } else {
+                    softAssertions.assertThat((servicesCount1-2))
+                            .as("Check that value of meal services in day 1 is correct")
+                            .isEqualTo(servicesCountMust1);
+                    System.out.println(CommonCode.ANSI_RED +"      Колличество сервисов питания в первом дне неверное: " + CommonCode.ANSI_RESET
+                            + (servicesCount1-2) + " -");
+                }
+
+                if ((servicesCount2-2) == servicesCountMust2){
+                    System.out.println(CommonCode.ANSI_GREEN+"      Колличество сервисов питания во втором дне верное + "+CommonCode.ANSI_RESET);
+                } else {
+                    softAssertions.assertThat((servicesCount2-2))
+                            .as("Check that value of meal services in day 2 is correct")
+                            .isEqualTo(servicesCountMust2);
+                    System.out.println(CommonCode.ANSI_RED +"      Колличество сервисов питания во втором дне неверное: " + CommonCode.ANSI_RESET
+                            + (servicesCount2-2) + " -");
+                }
+
+                //Удаляем город из Accomodations
+                $(By.xpath("//div[@id=\"accommodationsBlock\"]//div[@class=\"info-row\"][1]")).scrollTo().hover();
+                $(By.xpath("//div[@id=\"accommodationsBlock\"]//div[@class=\"info-row\"][1]//div[@class=\"delete-btn\"]")).hover().click();
+                confirm();
+                CommonCode.WaitForProgruzkaSilent();
 
             }
             else{
